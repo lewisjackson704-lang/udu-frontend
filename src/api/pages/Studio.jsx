@@ -3,13 +3,14 @@ import StudioDashboard from "../components/Studio/StudioDashboard";
 import EditorPanel from "../components/Studio/EditorPanel";
 import AnimationTools from "../components/Studio/AnimationTools";
 import AnalyticsPanel from "../components/Studio/AnalyticsPanel";
+import FanTierManager from "../components/FanTiers/FanTierManager";
 import { Settings, Upload, Video } from "lucide-react";
 
 /**
- * Full Creator Studio layout — updated with AnalyticsPanel
- * - Dual adaptive (light/dark)
- * - Combines dashboard, analytics, editor, and animation tools
- * - Clean spacing, consistent amber glow
+ * Full Creator Studio layout (FINAL)
+ * - Dual adaptive theme
+ * - Adds Monetization/Fan Tier management
+ * - Clean structure and responsive design
  */
 
 export default function Studio() {
@@ -25,7 +26,7 @@ export default function Studio() {
     <div
       className="flex h-full w-full flex-col bg-white text-black transition-colors duration-300 dark:bg-black dark:text-white"
       role="main"
-      aria-label="Creator Studio"
+      aria-label="Creator Studio Layout"
     >
       {/* Header */}
       <header
@@ -40,7 +41,7 @@ export default function Studio() {
           <button
             onClick={() => handleAction("Upload")}
             className="flex items-center gap-2 rounded-xl border border-amber-400 bg-amber-400/10 px-3 py-1.5 text-sm font-semibold text-amber-600 hover:bg-amber-400/20 dark:text-amber-300"
-            aria-label="Upload content"
+            aria-label="Upload new content"
           >
             <Upload size={16} aria-hidden="true" />
             Upload
@@ -48,7 +49,7 @@ export default function Studio() {
           <button
             onClick={() => handleAction("Go Live")}
             className="flex items-center gap-2 rounded-xl border border-amber-400 bg-amber-400/10 px-3 py-1.5 text-sm font-semibold text-amber-600 hover:bg-amber-400/20 dark:text-amber-300"
-            aria-label="Go live"
+            aria-label="Start a live stream"
           >
             <Video size={16} aria-hidden="true" />
             Go Live
@@ -68,17 +69,29 @@ export default function Studio() {
       <main
         className="flex flex-1 flex-col gap-6 overflow-y-auto p-6 lg:flex-row lg:gap-8"
         role="region"
-        aria-label="Main Studio Layout"
+        aria-label="Main Studio Content"
       >
-        {/* Left column: Dashboard + Analytics + Editor */}
+        {/* Left column: Dashboard + Analytics + Editor + Fan Tiers */}
         <section
           className="flex w-full flex-col gap-6 lg:w-2/3"
           role="region"
-          aria-label="Dashboard, Analytics, and Editor Section"
+          aria-label="Dashboard, Analytics, Editor, and Fan Tiers"
         >
           <StudioDashboard />
           <AnalyticsPanel />
           <EditorPanel />
+
+          {/* Monetization / Fan Tiers */}
+          <div
+            className="rounded-2xl border border-black/10 bg-amber-50/60 p-5 text-black dark:border-white/10 dark:bg-black/30 dark:text-white"
+            role="region"
+            aria-label="Monetization and Fan Tiers"
+          >
+            <h3 className="mb-4 text-lg font-semibold text-amber-500 dark:text-amber-400">
+              Monetization & Fan Tiers
+            </h3>
+            <FanTierManager />
+          </div>
         </section>
 
         {/* Right column: Animation + Tips */}
@@ -89,7 +102,6 @@ export default function Studio() {
         >
           <AnimationTools />
 
-          {/* Creator Tips */}
           <div
             className="rounded-2xl border border-black/10 bg-amber-50/60 p-5 text-black dark:border-white/10 dark:bg-black/30 dark:text-white"
             role="region"
@@ -102,10 +114,10 @@ export default function Studio() {
               className="list-disc space-y-1 pl-5 text-sm text-black/80 dark:text-white/70"
               aria-label="Tips for creators"
             >
-              <li>Engage with your fans during streams to boost retention.</li>
-              <li>Short clips tend to trend faster than long sessions.</li>
-              <li>Keep thumbnails simple — contrast wins clicks.</li>
-              <li>Monitor your analytics to see what works best.</li>
+              <li>Engage with your fans to grow your community.</li>
+              <li>Offer exclusive perks at each fan tier.</li>
+              <li>Track analytics weekly to refine your strategy.</li>
+              <li>Consistency in uploads builds trust and loyalty.</li>
             </ul>
           </div>
         </aside>
