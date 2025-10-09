@@ -2,13 +2,14 @@ import React from "react";
 import StudioDashboard from "../components/Studio/StudioDashboard";
 import EditorPanel from "../components/Studio/EditorPanel";
 import AnimationTools from "../components/Studio/AnimationTools";
+import AnalyticsPanel from "../components/Studio/AnalyticsPanel";
 import { Settings, Upload, Video } from "lucide-react";
 
 /**
- * Full Creator Studio layout
- * - Adaptive: switches automatically between light/dark themes.
- * - Combines dashboard, editor, and animation tools.
- * - Designed for clarity and breathing room.
+ * Full Creator Studio layout — updated with AnalyticsPanel
+ * - Dual adaptive (light/dark)
+ * - Combines dashboard, analytics, editor, and animation tools
+ * - Clean spacing, consistent amber glow
  */
 
 export default function Studio() {
@@ -69,13 +70,14 @@ export default function Studio() {
         role="region"
         aria-label="Main Studio Layout"
       >
-        {/* Left column: Dashboard + Editor */}
+        {/* Left column: Dashboard + Analytics + Editor */}
         <section
           className="flex w-full flex-col gap-6 lg:w-2/3"
           role="region"
-          aria-label="Dashboard and Editor Section"
+          aria-label="Dashboard, Analytics, and Editor Section"
         >
           <StudioDashboard />
+          <AnalyticsPanel />
           <EditorPanel />
         </section>
 
@@ -91,7 +93,7 @@ export default function Studio() {
           <div
             className="rounded-2xl border border-black/10 bg-amber-50/60 p-5 text-black dark:border-white/10 dark:bg-black/30 dark:text-white"
             role="region"
-            aria-label="Creator Tips"
+            aria-label="Creator Tips Section"
           >
             <h4 className="mb-2 text-lg font-semibold text-amber-500 dark:text-amber-400">
               Creator Tips
@@ -103,6 +105,7 @@ export default function Studio() {
               <li>Engage with your fans during streams to boost retention.</li>
               <li>Short clips tend to trend faster than long sessions.</li>
               <li>Keep thumbnails simple — contrast wins clicks.</li>
+              <li>Monitor your analytics to see what works best.</li>
             </ul>
           </div>
         </aside>
