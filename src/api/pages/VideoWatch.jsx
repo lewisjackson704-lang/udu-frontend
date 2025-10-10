@@ -10,89 +10,61 @@ import {
 } from "lucide-react";
 import { fetchVideoById, fetchRelatedVideos } from "../api/videos.js";
 import VideoCard from "../components/Video/VideoCard.jsx";
-import LiveChat from "../components/Live/LiveChat.jsx";
+import Comments from "../components/Comments/Comments.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 /**
- * VideoWatch.jsx — Main watch page
- * Displays video player, details, comments, and related videos.
+ * VideoWatch.jsx
+ * Displays video player, details, and comment feed
  */
 export default function VideoWatch() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [video, setVideo] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [liked, setLiked] = useState(false);
   const [support, setSupport] = useState(false);
-  const [showComments, setShowComments] = useState(true);
-
-  const loadVideo = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const videoData = await fetchVideoById(id);
-      const relatedVideos = await fetchRelatedVideos(id);
-      setVideo(videoData);
-      setRelated(relatedVideos || []);
-    } catch (err) {
-      console.error("Error loading video:", err);
-      setError("Failed to load video. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    loadVideo();
+    const loadVideo = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchVideoById(id);
+        const relatedData = await fetchRelatedVideos(id);
+        setVideo(data);
+        setRelated(relatedData || []);
+      } catch (err) {
+        console.error("Error loading video:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) loadVideo();
   }, [id]);
 
   if (loading) {
     return (
-      <div
-        className="flex h-screen flex-col items-center justify-center bg-black text-white/70"
-        role="status"
-        aria-label="Loading video"
-      >
+      <div className="flex h-screen flex-col items-center justify-center bg-black text-white/70">
         <Loader2 size={28} className="animate-spin text-amber-400 mb-2" />
         Loading video...
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div
-        className="flex h-screen items-center justify-center bg-black text-white/60"
-        role="alert"
-      >
-        {error}
-      </div>
-    );
-  }
-
   if (!video) {
     return (
-      <div
-        className="flex h-screen items-center justify-center bg-black text-white/60"
-        role="alert"
-        aria-label="Video not found"
-      >
+      <div className="flex h-screen items-center justify-center bg-black text-white/60">
         Video not found.
       </div>
     );
   }
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-b from-black via-neutral-900 to-black text-white flex flex-col md:flex-row"
-      aria-label="Video watch page"
-    >
-      {/* Main Video Player Section */}
+    <div className="min-h-screen bg-gradient-to-b from-black via-neutral-900 to-black text-white flex flex-col md:flex-row">
+      {/* Main Video Section */}
       <div className="flex-1 md:p-6">
-        <div
-          className="rounded-xl overflow-hidden border border-white/10 bg-black/60 backdrop-blur-md shadow-xl"
-          aria-label="Video player"
-        >
+        <div className="rounded-xl overflow-hidden border border-white/10 bg-black/60 backdrop-blur-md shadow-xl">
           <video
             src={video.videoUrl}
             controls
@@ -117,7 +89,6 @@ export default function VideoWatch() {
                     ? "text-amber-300"
                     : "text-white/60 hover:text-amber-300"
                 }`}
-                aria-label={liked ? "Unlike video" : "Like video"}
               >
                 <ThumbsUp size={16} /> {liked ? "Liked" : "Like"}
               </button>
@@ -128,14 +99,10 @@ export default function VideoWatch() {
                     ? "text-pink-400"
                     : "text-white/60 hover:text-pink-400"
                 }`}
-                aria-label={support ? "Remove support" : "Support video"}
               >
                 <Heart size={16} /> Support
               </button>
-              <button
-                className="flex items-center gap-1 text-white/60 hover:text-amber-300"
-                aria-label="Share video"
-              >
+              <button className="flex items-center gap-1 text-white/60 hover:text-amber-300">
                 <Share2 size={16} /> Share
               </button>
             </div>
@@ -146,66 +113,42 @@ export default function VideoWatch() {
             <div className="flex items-center gap-3">
               <img
                 src={video.creator?.avatar || "/default-avatar.png"}
-                alt={video.creator?.name || "Creator"}
+                alt={video.creator?.name}
                 className="h-10 w-10 rounded-full object-cover"
               />
               <div>
-                <p className="font-semibold text-white">{video.creator?.name || "Creator"}</p>
+                <p className="font-semibold text-white">
+                  {video.creator?.name || "Creator"}
+                </p>
                 <p className="text-xs text-white/60">
-                  {video.creator?.followers?.toLocaleString() || 0} followers
+                  {video.creator?.followers || 0} followers
                 </p>
               </div>
             </div>
             <a
               href={`/profile/${video.creator?._id}`}
               className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1 text-sm text-amber-300 hover:bg-amber-400/20 transition"
-              aria-label="View creator profile"
             >
               View Profile
             </a>
           </div>
 
           {/* Description */}
-          <div
-            className="mt-4 rounded-lg border border-white/10 bg-black/40 p-3 text-sm text-white/70 whitespace-pre-wrap"
-            aria-label="Video description"
-          >
+          <div className="mt-4 rounded-lg border border-white/10 bg-black/40 p-3 text-sm text-white/70 whitespace-pre-wrap">
             {video.description || "No description available."}
           </div>
 
-          {/* Comments Toggle */}
-          <div className="flex justify-between items-center mt-4">
-            <h2
-              className="text-amber-400 font-semibold flex items-center gap-2"
-              aria-label="Comments section"
-            >
-              <MessageSquare size={16} /> Comments
-            </h2>
-            <button
-              onClick={() => setShowComments(!showComments)}
-              className="text-xs text-white/60 hover:text-amber-300"
-              aria-label={showComments ? "Hide comments" : "Show comments"}
-            >
-              {showComments ? "Hide" : "Show"} Comments
-            </button>
+          {/* Comments Feed */}
+          <div className="mt-6">
+            <Comments targetId={video._id} type="video" user={user} />
           </div>
-
-          {/* Comments Section */}
-          {showComments && (
-            <div className="mt-3">
-              <LiveChat videoId={video._id} />
-            </div>
-          )}
         </div>
       </div>
 
       {/* Related Videos Sidebar */}
-      <aside
-        className="w-full md:w-[380px] p-4 border-t md:border-t-0 md:border-l border-white/10 bg-black/30 backdrop-blur-md"
-        aria-label="Related videos"
-      >
+      <aside className="w-full md:w-[380px] p-4 border-t md:border-t-0 md:border-l border-white/10 bg-black/30 backdrop-blur-md">
         <h3 className="flex items-center gap-2 mb-3 font-semibold text-amber-400">
-          <ChevronRight size={16} aria-hidden="true" /> Related Videos
+          <ChevronRight size={16} /> Related Videos
         </h3>
         {related.length > 0 ? (
           <div className="space-y-3">
