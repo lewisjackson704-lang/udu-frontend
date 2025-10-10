@@ -162,3 +162,15 @@ export async function safeCall(fn, ...args) {
     return null; // Return null for safer usage in components
   }
 }
+/**
+ * Fetch transaction history for either a creator or a fan.
+ * @param {string} mode - "creator" or "fan"
+ */
+export const fetchTransactionHistory = async (mode = "creator") => {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/fans/transactions?mode=${mode}`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to load transaction history");
+  const data = await res.json();
+  return data.transactions;
+};
