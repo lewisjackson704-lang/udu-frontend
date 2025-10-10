@@ -1,127 +1,88 @@
-import React from "react";
-import StudioDashboard from "../components/Studio/StudioDashboard";
-import EditorPanel from "../components/Studio/EditorPanel";
-import AnimationTools from "../components/Studio/AnimationTools";
-import AnalyticsPanel from "../components/Studio/AnalyticsPanel";
-import FanTierManager from "../components/FanTiers/FanTierManager";
-import { Settings, Upload, Video } from "lucide-react";
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
+import StudioDashboard from "../components/Studio/StudioDashboard.jsx";
+import EditorPanel from "../components/Studio/EditorPanel.jsx";
+import AnimationTools from "../components/Studio/AnimationTools.jsx";
+import { Video, Wand2, Sparkles } from "lucide-react";
 
 /**
- * Full Creator Studio layout (FINAL)
- * - Dual adaptive theme
- * - Adds Monetization/Fan Tier management
- * - Clean structure and responsive design
+ * Studio Page — U·DU Creator Workspace
+ * Combines Uploads, Analytics, Editor, and Animator in one adaptive view.
  */
-
 export default function Studio() {
-  const handleAction = (action) => {
-    try {
-      console.info(`Action triggered: ${action}`);
-    } catch (error) {
-      console.error(`Failed to execute action: ${action}`, error);
-    }
-  };
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  const tabs = [
+    { id: "dashboard", label: "Dashboard", icon: Video },
+    { id: "edit", label: "Editor", icon: Wand2 },
+    { id: "animate", label: "Animator", icon: Sparkles },
+  ];
 
   return (
     <div
-      className="flex h-full w-full flex-col bg-white text-black transition-colors duration-300 dark:bg-black dark:text-white"
-      role="main"
-      aria-label="Creator Studio Layout"
+      className="flex min-h-screen flex-col bg-gradient-to-b from-black via-neutral-900 to-black text-white"
+      aria-label="U·DU Creator Studio"
     >
       {/* Header */}
-      <header
-        className="flex items-center justify-between border-b border-black/10 bg-white/60 px-6 py-3 backdrop-blur-md dark:border-white/10 dark:bg-black/40"
-        role="banner"
-        aria-label="Studio Header"
-      >
-        <h2 className="text-xl font-bold text-amber-500 dark:text-amber-400">
-          Creator Studio
-        </h2>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => handleAction("Upload")}
-            className="flex items-center gap-2 rounded-xl border border-amber-400 bg-amber-400/10 px-3 py-1.5 text-sm font-semibold text-amber-600 hover:bg-amber-400/20 dark:text-amber-300"
-            aria-label="Upload new content"
-          >
-            <Upload size={16} aria-hidden="true" />
-            Upload
-          </button>
-          <button
-            onClick={() => handleAction("Go Live")}
-            className="flex items-center gap-2 rounded-xl border border-amber-400 bg-amber-400/10 px-3 py-1.5 text-sm font-semibold text-amber-600 hover:bg-amber-400/20 dark:text-amber-300"
-            aria-label="Start a live stream"
-          >
-            <Video size={16} aria-hidden="true" />
-            Go Live
-          </button>
-          <button
-            onClick={() => handleAction("Settings")}
-            className="flex items-center gap-2 rounded-xl border border-amber-400 bg-amber-400/10 px-3 py-1.5 text-sm font-semibold text-amber-600 hover:bg-amber-400/20 dark:text-amber-300"
-            aria-label="Open settings"
-          >
-            <Settings size={16} aria-hidden="true" />
-            Settings
-          </button>
-        </div>
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-black/50 px-4 py-3 backdrop-blur-md">
+        <h1 className="text-xl font-bold text-amber-400">U·DU Studio</h1>
+        {user && (
+          <div className="flex items-center gap-2 text-sm text-white/70">
+            <span>Signed in as</span>
+            <span className="font-semibold text-amber-300">
+              {user.username || user.email}
+            </span>
+          </div>
+        )}
       </header>
 
-      {/* Main Layout */}
-      <main
-        className="flex flex-1 flex-col gap-6 overflow-y-auto p-6 lg:flex-row lg:gap-8"
-        role="region"
-        aria-label="Main Studio Content"
+      {/* Navigation Tabs */}
+      <nav
+        className="flex justify-center gap-4 border-b border-white/10 bg-black/40 py-2 backdrop-blur-md"
+        aria-label="Studio navigation"
       >
-        {/* Left column: Dashboard + Analytics + Editor + Fan Tiers */}
-        <section
-          className="flex w-full flex-col gap-6 lg:w-2/3"
-          role="region"
-          aria-label="Dashboard, Analytics, Editor, and Fan Tiers"
-        >
-          <StudioDashboard />
-          <AnalyticsPanel />
-          <EditorPanel />
-
-          {/* Monetization / Fan Tiers */}
-          <div
-            className="rounded-2xl border border-black/10 bg-amber-50/60 p-5 text-black dark:border-white/10 dark:bg-black/30 dark:text-white"
-            role="region"
-            aria-label="Monetization and Fan Tiers"
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all ${
+              activeTab === tab.id
+                ? "bg-amber-400/20 text-amber-300 border border-amber-400/40"
+                : "text-white/60 hover:text-amber-300"
+            }`}
+            aria-label={`Switch to ${tab.label}`}
+            aria-current={activeTab === tab.id ? "page" : undefined}
           >
-            <h3 className="mb-4 text-lg font-semibold text-amber-500 dark:text-amber-400">
-              Monetization & Fan Tiers
-            </h3>
-            <FanTierManager />
-          </div>
-        </section>
+            <tab.icon size={16} aria-hidden="true" />
+            {tab.label}
+          </button>
+        ))}
+      </nav>
 
-        {/* Right column: Animation + Tips */}
-        <aside
-          className="flex w-full flex-col gap-6 lg:w-1/3"
-          role="complementary"
-          aria-label="Animation Tools and Creator Tips"
-        >
-          <AnimationTools />
-
-          <div
-            className="rounded-2xl border border-black/10 bg-amber-50/60 p-5 text-black dark:border-white/10 dark:bg-black/30 dark:text-white"
-            role="region"
-            aria-label="Creator Tips Section"
-          >
-            <h4 className="mb-2 text-lg font-semibold text-amber-500 dark:text-amber-400">
-              Creator Tips
-            </h4>
-            <ul
-              className="list-disc space-y-1 pl-5 text-sm text-black/80 dark:text-white/70"
-              aria-label="Tips for creators"
-            >
-              <li>Engage with your fans to grow your community.</li>
-              <li>Offer exclusive perks at each fan tier.</li>
-              <li>Track analytics weekly to refine your strategy.</li>
-              <li>Consistency in uploads builds trust and loyalty.</li>
-            </ul>
+      {/* Main Content */}
+      <main
+        className="flex-1 overflow-y-auto p-4 sm:p-6"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {activeTab === "dashboard" && <StudioDashboard user={user} />}
+        {activeTab === "edit" && (
+          <div className="max-w-6xl mx-auto">
+            <EditorPanel />
           </div>
-        </aside>
+        )}
+        {activeTab === "animate" && (
+          <div className="max-w-6xl mx-auto">
+            <AnimationTools />
+          </div>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="mt-auto border-t border-white/10 bg-black/40 py-3 text-center text-xs text-white/50 backdrop-blur-md">
+        © {new Date().getFullYear()} U·DU — Creator Studio
+      </footer>
     </div>
   );
 }
