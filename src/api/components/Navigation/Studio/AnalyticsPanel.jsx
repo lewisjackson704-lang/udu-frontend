@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  BarChart,
   LineChart,
   Line,
   XAxis,
@@ -7,125 +8,152 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
 } from "recharts";
-import { TrendingUp, Users, Eye, Heart } from "lucide-react";
+import { Eye, Heart, UserPlus, Clock, TrendingUp } from "lucide-react";
 
 /**
- * AnalyticsPanel — U·DU Creator Analytics Dashboard
- * Dual adaptive (light/dark) with amber accent data visuals.
+ * AnalyticsPanel — U·DU Creator Insights
+ * Clean, adaptive analytics visualization panel.
+ * Integrates easily with StudioDashboard or can be a standalone page.
  */
 export default function AnalyticsPanel() {
-  // Example data; these can be fetched dynamically from the backend
+  // Example chart data
   const viewData = [
-    { day: "Mon", views: 2300 },
-    { day: "Tue", views: 3200 },
-    { day: "Wed", views: 4100 },
-    { day: "Thu", views: 3800 },
-    { day: "Fri", views: 4700 },
-    { day: "Sat", views: 5100 },
-    { day: "Sun", views: 4200 },
+    { day: "Mon", views: 1200, watch: 200 },
+    { day: "Tue", views: 2100, watch: 300 },
+    { day: "Wed", views: 1850, watch: 260 },
+    { day: "Thu", views: 2500, watch: 410 },
+    { day: "Fri", views: 3100, watch: 520 },
+    { day: "Sat", views: 2900, watch: 490 },
+    { day: "Sun", views: 3400, watch: 610 },
   ];
 
   const engagementData = [
-    { label: "Likes", value: 12500, icon: <Heart className="text-amber-400" aria-hidden="true" /> },
-    { label: "Followers", value: 4600, icon: <Users className="text-amber-400" aria-hidden="true" /> },
-    { label: "Watch Hours", value: 890, icon: <Eye className="text-amber-400" aria-hidden="true" /> },
-    { label: "Growth", value: "+17%", icon: <TrendingUp className="text-amber-400" aria-hidden="true" /> },
+    { metric: "Likes", value: 540 },
+    { metric: "Comments", value: 190 },
+    { metric: "Shares", value: 85 },
+    { metric: "Subs", value: 120 },
   ];
 
   return (
     <div
-      className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/30 p-6 backdrop-blur-md transition-colors duration-300 text-black dark:text-white"
-      role="region"
-      aria-label="Channel Analytics Panel"
+      className="rounded-2xl border border-amber-400/30 bg-black/50 p-6 text-white backdrop-blur-md shadow-md"
+      aria-label="Creator analytics dashboard"
     >
-      <h3 className="mb-4 text-lg font-semibold text-amber-500 dark:text-amber-400">
-        Channel Analytics
+      <h3 className="text-xl font-bold text-amber-400 mb-4 flex items-center gap-2">
+        <TrendingUp size={20} aria-hidden="true" /> Creator Analytics
       </h3>
 
-      {/* Key Metrics */}
+      {/* Quick KPIs */}
       <div
-        className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4"
+        className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6"
         role="region"
-        aria-label="Key engagement metrics"
+        aria-label="Key performance indicators"
       >
-        {engagementData.map((e, i) => (
+        {[
+          { icon: Eye, label: "Total Views", value: "135K" },
+          { icon: Clock, label: "Watch Time", value: "1,240 hrs" },
+          { icon: Heart, label: "Likes", value: "5.2K" },
+          { icon: UserPlus, label: "Subs Gained", value: "382" },
+          { icon: TrendingUp, label: "Engagement", value: "8.4%" },
+        ].map((stat, i) => (
           <div
             key={i}
-            className="flex flex-col items-center justify-center gap-1 rounded-xl border border-amber-300/30 bg-white/50 p-3 text-center shadow-sm dark:bg-black/40"
-            role="article"
-            aria-label={`${e.label}: ${e.value}`}
+            className="flex flex-col items-center rounded-xl border border-amber-400/20 bg-black/40 py-3 hover:bg-black/50 transition"
+            aria-label={`${stat.label}: ${stat.value}`}
           >
-            <div className="text-amber-500 dark:text-amber-400">{e.icon}</div>
-            <div className="text-lg font-semibold">{e.value}</div>
-            <div className="text-xs text-black/60 dark:text-white/70">{e.label}</div>
+            <stat.icon size={18} className="text-amber-400 mb-1" aria-hidden="true" />
+            <div className="text-base font-semibold">{stat.value}</div>
+            <div className="text-xs text-white/70">{stat.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Charts */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Line Chart */}
-        <div
-          className="rounded-xl border border-white/10 bg-white/40 dark:bg-black/40 p-4"
-          role="region"
-          aria-label="Weekly Views Line Chart"
-        >
-          <h4 className="mb-3 text-sm font-semibold text-amber-500 dark:text-amber-400">
-            Views This Week
-          </h4>
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={viewData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#666" opacity={0.2} />
-              <XAxis dataKey="day" stroke="currentColor" opacity={0.5} />
-              <YAxis stroke="currentColor" opacity={0.5} />
-              <Tooltip
-                contentStyle={{
-                  background: "#1f1f1f",
-                  border: "1px solid rgba(255,213,79,0.3)",
-                  color: "white",
-                }}
-                labelStyle={{ color: "#FBBF24" }}
-              />
-              <Line
-                type="monotone"
-                dataKey="views"
-                stroke="#FBBF24"
-                strokeWidth={2.5}
-                dot={{ r: 4, fill: "#FBBF24" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Views Trend Line */}
+      <div
+        className="h-60 rounded-xl border border-amber-400/20 bg-black/30 p-3 mb-6"
+        role="region"
+        aria-label="Views per day chart"
+      >
+        <h4 className="text-sm text-amber-300 mb-2 font-semibold">Views per Day</h4>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={viewData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+            <XAxis dataKey="day" stroke="#aaa" />
+            <YAxis stroke="#aaa" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "rgba(0,0,0,0.7)",
+                border: "1px solid #fbbf24",
+                borderRadius: "8px",
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="views"
+              stroke="#fbbf24"
+              strokeWidth={2}
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
-        {/* Bar Chart */}
-        <div
-          className="rounded-xl border border-white/10 bg-white/40 dark:bg-black/40 p-4"
-          role="region"
-          aria-label="Daily Engagement Bar Chart"
-        >
-          <h4 className="mb-3 text-sm font-semibold text-amber-500 dark:text-amber-400">
-            Engagement by Day
-          </h4>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={viewData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#666" opacity={0.2} />
-              <XAxis dataKey="day" stroke="currentColor" opacity={0.5} />
-              <YAxis stroke="currentColor" opacity={0.5} />
-              <Tooltip
-                contentStyle={{
-                  background: "#1f1f1f",
-                  border: "1px solid rgba(255,213,79,0.3)",
-                  color: "white",
-                }}
-                labelStyle={{ color: "#FBBF24" }}
-              />
-              <Bar dataKey="views" fill="#FBBF24" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Watch Time Area Chart */}
+      <div
+        className="h-60 rounded-xl border border-amber-400/20 bg-black/30 p-3 mb-6"
+        role="region"
+        aria-label="Watch time trend chart"
+      >
+        <h4 className="text-sm text-amber-300 mb-2 font-semibold">Watch Time Trend</h4>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={viewData}>
+            <defs>
+              <linearGradient id="amberFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.7} />
+                <stop offset="95%" stopColor="#fbbf24" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+            <XAxis dataKey="day" stroke="#aaa" />
+            <YAxis stroke="#aaa" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "rgba(0,0,0,0.7)",
+                border: "1px solid #fbbf24",
+                borderRadius: "8px",
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="watch"
+              stroke="#fbbf24"
+              fillOpacity={1}
+              fill="url(#amberFill)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Engagement Breakdown */}
+      <div
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+        role="region"
+        aria-label="Engagement breakdown"
+      >
+        {engagementData.map((item, i) => (
+          <div
+            key={i}
+            className="rounded-xl border border-amber-400/20 bg-black/40 p-3 text-center text-sm text-white/80 hover:bg-black/50"
+            aria-label={`${item.metric}: ${item.value}`}
+          >
+            <div className="text-lg font-bold text-amber-400">{item.value}</div>
+            <div className="text-xs text-white/70">{item.metric}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
