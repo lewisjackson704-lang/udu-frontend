@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Edit, Trash2, Eye, Loader2, PlayCircle } from "lucide-react";
+import { Edit, Sparkles, Trash2, Eye, Loader2 } from "lucide-react";
 
 /**
- * VideoManager — Creator’s upload management dashboard.
- * Displays uploaded videos with options to view, edit, or delete.
+ * VideoManager — list + actions
+ * Props:
+ *  - onEdit(video)
+ *  - onAnimate(video)
  */
-export default function VideoManager() {
+export default function VideoManager({ onEdit, onAnimate }) {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch creator’s videos
+  // Fetch uploaded videos
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -20,9 +22,14 @@ export default function VideoManager() {
         });
         if (!res.ok) throw new Error("Failed to fetch videos.");
         const data = await res.json();
-        setVideos(data.videos || []);
+
+        // Map video URLs with fallback logic
+        setVideos((data.videos || []).map((video) => ({
+          ...video,
+          url: video.url || video.playbackUrl || video.hlsUrl || "",
+        })));
       } catch (err) {
-        setError(err.message || "Something went wrong. Please try again.");
+        setError(err.message || "An error occurred. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -33,13 +40,15 @@ export default function VideoManager() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this video?")) return;
+
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/videos/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
       if (!res.ok) throw new Error("Failed to delete the video.");
-      setVideos((prevVideos) => prevVideos.filter((v) => v._id !== id));
+
+      setVideos((prevVideos) => prevVideos.filter((video) => video._id !== id));
     } catch (err) {
       alert(err.message || "An error occurred while deleting the video.");
     }
@@ -62,7 +71,7 @@ export default function VideoManager() {
         <div
           className="flex justify-center py-10"
           role="status"
-          aria-label="Loading videos"
+          aria-label="Loading videos..."
         >
           <Loader2 size={24} className="animate-spin text-amber-400" />
         </div>
@@ -79,10 +88,10 @@ export default function VideoManager() {
       {!loading && !error && videos.length === 0 && (
         <div
           className="py-10 text-center text-white/60"
-          aria-label="No videos uploaded yet"
+          aria-label="No videos uploaded"
         >
           No videos uploaded yet. <br />
-          <span className="text-amber-400">Click “Upload New Video”</span> to get started.
+          <span className="text-amber-400">Click “New Upload”</span> to get started.
         </div>
       )}
 
@@ -114,36 +123,50 @@ export default function VideoManager() {
                     />
                   </td>
                   <td className="px-4 py-2 font-medium text-white">{video.title}</td>
-                  <td className="px-4 py-2 text-white/70">{video.category || "N/A"}</td>
+                  <td className="px-4 py-2 text-white/70">
+                    {video.category || "N/A"}
+                  </td>
                   <td className="px-4 py-2 text-white/70">{video.views || 0}</td>
                   <td className="px-4 py-2 text-white/50">
-                    {new Date(video.createdAt).toLocaleDateString()}
+                    {video.createdAt
+                      ? new Date(video.createdAt).toLocaleDateString()
+                      : "-"}
                   </td>
-                  <td className="px-4 py-2 text-right flex gap-2 justify-end">
-                    <button
-                      className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-2 hover:bg-amber-400/20"
-                      title="View Video"
-                      onClick={() => window.open(`/watch/${video._id}`, "_blank")}
-                      aria-label={`View video: ${video.title}`}
-                    >
-                      <Eye size={16} className="text-amber-400" />
-                    </button>
-                    <button
-                      className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-2 hover:bg-amber-400/20"
-                      title="Edit"
-                      onClick={() => alert("Edit functionality coming soon!")}
-                      aria-label={`Edit video: ${video.title}`}
-                    >
-                      <Edit size={16} className="text-amber-400" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(video._id)}
-                      className="rounded-lg border border-red-500/30 bg-red-500/10 p-2 hover:bg-red-500/20"
-                      title="Delete"
-                      aria-label={`Delete video: ${video.title}`}
-                    >
-                      <Trash2 size={16} className="text-red-400" />
-                    </button>
+                  <td className="px-4 py-2">
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-2 hover:bg-amber-400/20"
+                        title="View Video"
+                        onClick={() => window.open(`/watch/${video._id}`, "_blank")}
+                        aria-label={`View video: ${video.title}`}
+                      >
+                        <Eye size={16} className="text-amber-400" />
+                      </button>
+                      <button
+                        className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-2 hover:bg-amber-400/20"
+                        title="Edit"
+                        onClick={() => onEdit?.(video)}
+                        aria-label={`Edit video: ${video.title}`}
+                      >
+                        <Edit size={16} className="text-amber-400" />
+                      </button>
+                      <button
+                        className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-2 hover:bg-amber-400/20"
+                        title="Animate"
+                        onClick={() => onAnimate?.(video)}
+                        aria-label={`Animate video: ${video.title}`}
+                      >
+                        <Sparkles size={16} className="text-amber-400" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(video._id)}
+                        className="rounded-lg border border-red-500/30 bg-red-500/10 p-2 hover:bg-red-500/20"
+                        title="Delete"
+                        aria-label={`Delete video: ${video.title}`}
+                      >
+                        <Trash2 size={16} className="text-red-400" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
