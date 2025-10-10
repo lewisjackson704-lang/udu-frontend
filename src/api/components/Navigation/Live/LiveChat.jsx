@@ -1,80 +1,73 @@
-import React, { useMemo, useRef, useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { Send, Popcorn } from "lucide-react";
+import React, { useState } from "react";
+import { useStream } from "../../api/context/StreamContext.jsx";
+import { Send } from "lucide-react";
 
-/**
- * Comfortable chat: larger font, uncluttered, subtle rows.
- * - messages: [{ id, user, text, badge? }]
- * - onSend(text): called when sending a message
- * - showHeader: whether to display "Live Chat"
- */
-export default function LiveChat({
-  messages = [],
-  onSend,
-  showHeader = true,
-  className = "",
-}) {
-  const [text, setText] = useState("");
-  const endRef = useRef(null);
+export default function LiveChat({ user }) {
+  const { chatMessages, sendChat, isLive } = useStream();
+  const [message, setMessage] = useState("");
 
-  // Ensure the input text is valid before enabling the send button
-  const canSend = useMemo(() => text.trim().length > 0, [text]);
-
-  useEffect(() => {
-    try {
-      // Auto-scroll to bottom on new messages
-      endRef.current?.scrollIntoView({ behavior: "smooth" });
-    } catch (error) {
-      console.error("Failed to scroll to the bottom of the chat:", error);
-    }
-  }, [messages.length]);
-
-  // Sanitize user input to prevent XSS attacks
-  const sanitizeText = (input) => {
-    try {
-      const div = document.createElement("div");
-      div.textContent = input;
-      return div.innerHTML;
-    } catch (error) {
-      console.error("Failed to sanitize text:", error);
-      return input; // Fallback to the raw input if sanitization fails
-    }
-  };
-
-  // Submit message handler
-  const submit = (e) => {
-    e?.preventDefault();
-    if (!canSend) return;
+  /**
+   * Handles sending a chat message.
+   * Clears the input after sending.
+   */
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
 
     try {
-      const sanitizedText = sanitizeText(text.trim());
-      onSend?.(sanitizedText);
-      setText("");
+      sendChat(message, user?.name || "Guest");
+      setMessage("");
     } catch (error) {
-      console.error("Failed to send the message:", error);
+      console.error("Failed to send chat message:", error);
     }
   };
 
   return (
-    <div
-      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md ${className}`}
-      role="region"
-      aria-label="Live Chat"
-    >
-      {/* Header */}
-      {showHeader && (
-        <header className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-          <Popcorn size={18} className="text-amber-300" aria-hidden="true" />
-          <h3 className="text-sm font-semibold text-white">Live Chat</h3>
-        </header>
-      )}
-
-      {/* Messages */}
+    <div className="flex flex-col w-full h-full bg-black/50 text-white rounded-xl border border-amber-400/30 backdrop-blur-lg">
+      {/* Chat Messages */}
       <div
-        className="flex-1 space-y-1 overflow-y-auto p-3"
+        className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin scrollbar-thumb-amber-400/60"
         role="log"
         aria-live="polite"
         aria-relevant="additions"
       >
-        {Array.isArray(messages) && messages.length > 0 ? (
-          messages.map
+        {!isLive && (
+          <p className="text-center text-sm text-amber-400/70" role="status">
+            Chat is unavailable until the stream is live.
+          </p>
+        )}
+        {chatMessages.map((msg, i) => (
+          <div key={i} className="flex flex-col">
+            <span className="text-xs font-semibold text-amber-400">{msg.user}</span>
+            <span className="text-sm text-white/90">{msg.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Chat Input */}
+      <form
+        onSubmit={handleSend}
+        className="flex items-center border-t border-white/10 p-2"
+        aria-label="Chat input form"
+      >
+        <input
+          type="text"
+          value={message}
+          disabled={!isLive}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder={isLive ? "Say something..." : "Waiting for stream..."}
+          className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-white/40"
+          aria-label="Chat message input"
+        />
+        <button
+          type="submit"
+          disabled={!isLive}
+          className="ml-2 rounded-lg bg-amber-500 px-3 py-1 text-sm font-semibold text-black hover:bg-amber-400 disabled:opacity-50"
+          aria-label="Send message"
+        >
+          <Send size={16} aria-hidden="true" />
+        </button>
+      </form>
+    </div>
+  );
+}
