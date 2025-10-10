@@ -1,1 +1,82 @@
+/* Define Keyframes */
+@keyframes fade {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
 
+@keyframes zoom {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 2px #fbbf24); }
+  50% { filter: drop-shadow(0 0 12px #fbbf24); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* Animation Utility Classes */
+:root {
+  --default-animation-duration: 3s;
+  --fade-duration: var(--default-animation-duration);
+  --zoom-duration: 5s;
+  --shake-duration: 0.6s;
+  --glow-duration: var(--default-animation-duration);
+  --float-duration: var(--default-animation-duration);
+  --fade-in-duration: 2s;
+}
+
+.animate-fade {
+  animation: fade var(--fade-duration) infinite;
+  will-change: opacity;
+}
+
+.animate-zoom {
+  animation: zoom var(--zoom-duration) infinite;
+  will-change: transform;
+}
+
+.animate-shake {
+  animation: shake var(--shake-duration) infinite;
+  will-change: transform;
+}
+
+.animate-glow {
+  animation: glow var(--glow-duration) infinite;
+  will-change: filter;
+}
+
+.animate-float {
+  animation: float var(--float-duration) infinite;
+  will-change: transform;
+}
+
+.animate-fade-in {
+  animation: fade var(--fade-in-duration) ease-in-out;
+  will-change: opacity;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade,
+  .animate-zoom,
+  .animate-shake,
+  .animate-glow,
+  .animate-float,
+  .animate-fade-in {
+    animation: none;
+  }
+}
