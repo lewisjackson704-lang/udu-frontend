@@ -1,106 +1,176 @@
-import React, { useState } from "react";
-import LivePlayer from "../components/Live/LivePlayer";
-import LiveChat from "../components/Live/LiveChat";
-import LiveSchedule from "../components/Live/LiveSchedule";
+import React, { useEffect, useState } from "react";
+import { Loader2, Eye, Heart, Users } from "lucide-react";
+import { fetchStreamById } from "../../api/streams.js";
+import Comments from "../Comments/Comments.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 /**
- * Full Live page layout — comfortable, responsive, and clear.
- * - On desktop: video left (70%), chat right (30%).
- * - On mobile: video top, chat collapses into a slide-up panel.
+ * LivePlayer.jsx
+ * Unified live stream player + engagement system
  */
-export default function Live() {
-  const [messages, setMessages] = useState([
-    { id: 1, user: "Ella", text: "Let’s gooo 🔥" },
-    { id: 2, user: "Jay", text: "Sound quality is great!", badge: "Fan+" },
-    { id: 3, user: "Kris", text: "Love the vibe!" },
-  ]);
+export default function LivePlayer({ streamId }) {
+  const { user } = useAuth();
+  const [stream, setStream] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [viewerCount, setViewerCount] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [error, setError] = useState(""); // Error state for better feedback
 
-  const [schedule] = useState(() => [
-    {
-      id: 1,
-      title: "Late Night Studio Session",
-      when: new Date(Date.now() + 3600 * 1000 * 2),
-      host: "Ella",
-      thumbnail: "/logo192.png",
-    },
-    {
-      id: 2,
-      title: "Behind The Beat",
-      when: new Date(Date.now() + 3600 * 1000 * 6),
-      host: "Kris",
-      thumbnail: "/logo192.png",
-    },
-  ]);
+  // Load stream data
+  useEffect(() => {
+    const loadStream = async () => {
+      try {
+        setLoading(true);
+        setError(""); // Reset error state
+        const data = await fetchStreamById(streamId);
+        setStream(data);
+        setViewerCount(data.viewers || 0);
+      } catch (err) {
+        console.error("Failed to load stream:", err);
+        setError("Failed to load stream. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const sendMessage = (text) => {
-    try {
-      const id = messages.length + 1;
-      setMessages([...messages, { id, user: "You", text }]);
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
-  };
+    if (streamId) loadStream();
+  }, [streamId]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div
+        className="flex h-screen items-center justify-center bg-black text-white/70"
+        role="status"
+        aria-label="Loading live stream"
+      >
+        <Loader2 size={28} className="animate-spin text-amber-400 mb-2" />
+        Loading stream...
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div
+        className="flex h-screen items-center justify-center bg-black text-red-400 text-center"
+        role="alert"
+        aria-label="Error loading live stream"
+      >
+        {error}
+      </div>
+    );
+  }
+
+  // No stream found
+  if (!stream) {
+    return (
+      <div
+        className="flex h-screen items-center justify-center bg-black text-white/60"
+        role="alert"
+        aria-label="Live stream not found"
+      >
+        Stream not found.
+      </div>
+    );
+  }
 
   return (
     <div
-      className="flex h-full w-full flex-col bg-black/95 text-white"
-      role="main"
-      aria-label="Live Streaming Page"
+      className="min-h-screen bg-gradient-to-b from-black via-neutral-900 to-black text-white flex flex-col md:flex-row"
+      aria-label="Live stream player page"
     >
-      {/* Top header */}
-      <header className="flex items-center justify-between border-b border-white/10 px-6 py-3">
-        <h2 className="text-lg font-semibold text-amber-300">U·DU Live</h2>
-        <div className="flex items-center gap-3">
-          <button
-            className="rounded-xl border border-amber-300/40 bg-black/40 px-3 py-1.5 text-sm font-semibold text-amber-300 hover:border-amber-300"
-            onClick={() => console.log("Go Live button clicked.")}
-            aria-label="Go Live"
+      {/* Stream Player */}
+      <div className="flex-1 p-4 md:p-6">
+        <div
+          className="rounded-xl overflow-hidden border border-white/10 bg-black/60 backdrop-blur-md shadow-xl relative"
+          aria-label="Live stream player"
+        >
+          <video
+            src={stream.streamUrl}
+            controls
+            autoPlay
+            className="w-full aspect-video object-cover"
+          />
+          <div
+            className="absolute top-3 left-3 bg-amber-500/80 px-2 py-1 rounded-md text-xs font-semibold text-black"
+            aria-label="Live indicator"
           >
-            Go Live
+            LIVE
+          </div>
+        </div>
+
+        {/* Stream Info */}
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src={stream.creator?.avatar || "/default-avatar.png"}
+              alt={`${stream.creator?.name || "Creator"}'s avatar`}
+              className="h-10 w-10 rounded-full object-cover"
+              aria-hidden="true"
+            />
+            <div>
+              <p className="font-semibold text-white">
+                {stream.creator?.name || "Creator"}
+              </p>
+              <p
+                className="text-xs text-white/60 flex items-center gap-1"
+                aria-label={`Currently ${viewerCount} viewers`}
+              >
+                <Eye size={12} aria-hidden="true" /> {viewerCount} watching
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setLiked(!liked)}
+            className={`flex items-center gap-1 text-sm ${
+              liked
+                ? "text-amber-400"
+                : "text-white/60 hover:text-amber-300 transition"
+            }`}
+            aria-label={liked ? "Unlike stream" : "Like stream"}
+          >
+            <Heart size={14} aria-hidden="true" /> {liked ? "Liked" : "Like"}
           </button>
         </div>
-      </header>
 
-      {/* Main layout */}
-      <main className="flex flex-1 flex-col lg:flex-row">
-        {/* Left: Player + Schedule */}
-        <div className="flex flex-1 flex-col gap-4 p-4 lg:w-[70%]">
-          <LivePlayer
-            src="https://www.w3schools.com/html/mov_bbb.mp4"
-            title="Studio Live with Ella"
-            viewers={324}
-            poster="/logo192.png"
-          />
-          <LiveSchedule
-            items={schedule}
-            onRemind={(id) => {
-              try {
-                console.log(`Reminder set for stream ID: ${id}`);
-              } catch (error) {
-                console.error(`Failed to set reminder for stream ID ${id}:`, error);
-              }
-            }}
-          />
+        {/* Live Chat */}
+        <div className="mt-6" aria-label="Live chat">
+          <Comments targetId={stream._id} type="stream" user={user} />
         </div>
+      </div>
 
-        {/* Right: Chat */}
-        <aside
-          className="border-t border-white/10 lg:w-[30%] lg:border-l lg:border-t-0"
-          role="complementary"
-          aria-label="Live Chat Section"
-        >
-          <LiveChat
-            messages={messages}
-            onSend={(text) => {
-              try {
-                sendMessage(text);
-              } catch (error) {
-                console.error("Error in chat message submission:", error);
-              }
-            }}
-          />
-        </aside>
-      </main>
+      {/* Viewer Panel */}
+      <aside
+        className="w-full md:w-[380px] p-4 border-t md:border-t-0 md:border-l border-white/10 bg-black/30 backdrop-blur-md"
+        aria-label="Viewer list"
+      >
+        <h3 className="flex items-center gap-2 mb-3 font-semibold text-amber-400">
+          <Users size={16} aria-hidden="true" /> Viewers
+        </h3>
+        <div className="text-sm text-white/70">
+          {stream.viewersList?.length ? (
+            stream.viewersList.map((viewer) => (
+              <div
+                key={viewer._id}
+                className="flex items-center gap-2 py-1 border-b border-white/5"
+                aria-label={`Viewer: ${viewer.username}`}
+              >
+                <img
+                  src={viewer.avatar || "/default-avatar.png"}
+                  className="h-6 w-6 rounded-full object-cover"
+                  alt={`${viewer.username}'s avatar`}
+                  aria-hidden="true"
+                />
+                <span>{viewer.username}</span>
+              </div>
+            ))
+          ) : (
+            <p className="text-white/60">No viewers yet.</p>
+          )}
+        </div>
+      </aside>
     </div>
   );
 }
