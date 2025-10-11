@@ -1,5 +1,7 @@
 // src/api/fans.js
-// Full API client for fan tiers, subscriptions, and supporter data
+// Full API client for fan tiers, subscriptions, supporter data, and monetization
+
+import apiClient from "./apiClient.js";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -47,7 +49,12 @@ async function apiRequest(endpoint, options = {}) {
  * Fetch all fan tiers owned by the logged-in creator
  */
 export const fetchFanTiers = async () => {
-  return apiRequest(`/api/fans/tiers`, { method: "GET" });
+  try {
+    return await apiRequest(`/api/fans/tiers`, { method: "GET" });
+  } catch (error) {
+    console.error("Error fetching fan tiers:", error);
+    throw error;
+  }
 };
 
 /**
@@ -55,10 +62,19 @@ export const fetchFanTiers = async () => {
  * @param {Object} tier - { name, price, perks }
  */
 export const createFanTier = async (tier) => {
-  return apiRequest(`/api/fans/tiers`, {
-    method: "POST",
-    body: JSON.stringify(tier),
-  });
+  if (!tier || typeof tier !== "object") {
+    throw new Error("Invalid tier data provided.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/tiers`, {
+      method: "POST",
+      body: JSON.stringify(tier),
+    });
+  } catch (error) {
+    console.error("Error creating fan tier:", error);
+    throw error;
+  }
 };
 
 /**
@@ -67,10 +83,19 @@ export const createFanTier = async (tier) => {
  * @param {Object} updates - { name?, price?, perks? }
  */
 export const updateFanTier = async (id, updates) => {
-  return apiRequest(`/api/fans/tiers/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(updates),
-  });
+  if (!id || !updates || typeof updates !== "object") {
+    throw new Error("Tier ID and valid updates are required.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/tiers/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(updates),
+    });
+  } catch (error) {
+    console.error(`Error updating fan tier ${id}:`, error);
+    throw error;
+  }
 };
 
 /**
@@ -78,7 +103,16 @@ export const updateFanTier = async (id, updates) => {
  * @param {string} id - Tier ID
  */
 export const deleteFanTier = async (id) => {
-  return apiRequest(`/api/fans/tiers/${id}`, { method: "DELETE" });
+  if (!id) {
+    throw new Error("Tier ID is required to delete a tier.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/tiers/${id}`, { method: "DELETE" });
+  } catch (error) {
+    console.error(`Error deleting fan tier ${id}:`, error);
+    throw error;
+  }
 };
 
 /**
@@ -86,14 +120,28 @@ export const deleteFanTier = async (id) => {
  * @param {string} tierId
  */
 export const fetchSupportersByTier = async (tierId) => {
-  return apiRequest(`/api/fans/tiers/${tierId}/supporters`, { method: "GET" });
+  if (!tierId) {
+    throw new Error("Tier ID is required to fetch supporters.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/tiers/${tierId}/supporters`, { method: "GET" });
+  } catch (error) {
+    console.error(`Error fetching supporters for tier ID ${tierId}:`, error);
+    throw error;
+  }
 };
 
 /**
  * Fetch overall creator monetization stats (for dashboard)
  */
 export const fetchCreatorStats = async () => {
-  return apiRequest(`/api/fans/creator/stats`, { method: "GET" });
+  try {
+    return await apiRequest(`/api/fans/creator/stats`, { method: "GET" });
+  } catch (error) {
+    console.error("Error fetching creator stats:", error);
+    throw error;
+  }
 };
 
 /**
@@ -107,7 +155,16 @@ export const fetchCreatorStats = async () => {
  * @param {string} creatorId
  */
 export const fetchAvailableTiers = async (creatorId) => {
-  return apiRequest(`/api/fans/${creatorId}/tiers`, { method: "GET" });
+  if (!creatorId) {
+    throw new Error("Creator ID is required to fetch available tiers.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/${creatorId}/tiers`, { method: "GET" });
+  } catch (error) {
+    console.error(`Error fetching available tiers for creator ID ${creatorId}:`, error);
+    throw error;
+  }
 };
 
 /**
@@ -115,7 +172,16 @@ export const fetchAvailableTiers = async (creatorId) => {
  * @param {string} tierId
  */
 export const subscribeToTier = async (tierId) => {
-  return apiRequest(`/api/fans/subscribe/${tierId}`, { method: "POST" });
+  if (!tierId) {
+    throw new Error("Tier ID is required to subscribe.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/subscribe/${tierId}`, { method: "POST" });
+  } catch (error) {
+    console.error(`Error subscribing to tier ID ${tierId}:`, error);
+    throw error;
+  }
 };
 
 /**
@@ -123,14 +189,28 @@ export const subscribeToTier = async (tierId) => {
  * @param {string} tierId
  */
 export const cancelSubscription = async (tierId) => {
-  return apiRequest(`/api/fans/unsubscribe/${tierId}`, { method: "DELETE" });
+  if (!tierId) {
+    throw new Error("Tier ID is required to cancel a subscription.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/unsubscribe/${tierId}`, { method: "DELETE" });
+  } catch (error) {
+    console.error(`Error canceling subscription for tier ID ${tierId}:`, error);
+    throw error;
+  }
 };
 
 /**
  * Get a fan’s active subscriptions
  */
 export const fetchUserSubscriptions = async () => {
-  return apiRequest(`/api/fans/subscriptions`, { method: "GET" });
+  try {
+    return await apiRequest(`/api/fans/subscriptions`, { method: "GET" });
+  } catch (error) {
+    console.error("Error fetching user subscriptions:", error);
+    throw error;
+  }
 };
 
 /**
@@ -138,39 +218,32 @@ export const fetchUserSubscriptions = async () => {
  * @param {string} creatorId
  */
 export const fetchSupporterCount = async (creatorId) => {
-  return apiRequest(`/api/fans/${creatorId}/supporters/count`, { method: "GET" });
+  if (!creatorId) {
+    throw new Error("Creator ID is required to fetch supporter count.");
+  }
+
+  try {
+    return await apiRequest(`/api/fans/${creatorId}/supporters/count`, { method: "GET" });
+  } catch (error) {
+    console.error(`Error fetching supporter count for creator ID ${creatorId}:`, error);
+    throw error;
+  }
 };
 
-/**
- * =========================
- * ERROR SAFE WRAPPERS
- * =========================
- * (You can use these for safer calls in components)
- */
-
-/**
- * Wrapper for API calls with safe error handling
- * @param {Function} fn - The API function to call
- * @param {...any} args - Arguments for the API function
- * @returns {Promise<any>} - Returns API response or null on error
- */
-export async function safeCall(fn, ...args) {
-  try {
-    return await fn(...args);
-  } catch (err) {
-    console.error("Fan API Error:", err.message);
-    return null; // Return null for safer usage in components
-  }
-}
 /**
  * Fetch transaction history for either a creator or a fan.
  * @param {string} mode - "creator" or "fan"
  */
 export const fetchTransactionHistory = async (mode = "creator") => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/fans/transactions?mode=${mode}`, {
-    credentials: "include",
-  });
-  if (!res.ok) throw new Error("Failed to load transaction history");
-  const data = await res.json();
-  return data.transactions;
+  if (!["creator", "fan"].includes(mode)) {
+    throw new Error('Invalid mode. Must be "creator" or "fan".');
+  }
+
+  try {
+    const response = await apiRequest(`/api/fans/transactions?mode=${mode}`, { method: "GET" });
+    return response;
+  } catch (error) {
+    console.error(`Error fetching transaction history (mode: ${mode}):`, error);
+    throw error;
+  }
 };
