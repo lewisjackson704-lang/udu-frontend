@@ -1,1 +1,160 @@
+/* src/styles/globals.css */
 
+/* ===========================
+   Basic Reset
+   =========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #000;
+  color: #fff;
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none; /* Ensure consistent button styles */
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===========================
+   Scrollbar Styling
+   =========================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 191, 0, 0.3);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #000; /* Match the dark background */
+}
+/* Consider adding cross-browser scrollbar styles */
+
+/* ===========================
+   Root Variables
+   =========================== */
+:root {
+  --font-size-base: 16px; /* Base font size for scalability */
+  --color-primary: #ffb300;
+  --color-background: #000;
+  --color-text: #fff;
+  --color-scrollbar-thumb: rgba(255, 191, 0, 0.3);
+  --color-scrollbar-track: #000;
+}
+
+/* ===========================
+   Layout Helpers
+   =========================== */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* ===========================
+   Default Typography
+   =========================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+ul,
+ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* ===========================
+   Utility Classes
+   =========================== */
+.padding-sm {
+  padding: 0.5rem;
+}
+
+.padding-md {
+  padding: 1rem;
+}
+
+.padding-lg {
+  padding: 2rem;
+}
+
+.margin-sm {
+  margin: 0.5rem;
+}
+
+.margin-md {
+  margin: 1rem;
+}
+
+.margin-lg {
+  margin: 2rem;
+}
