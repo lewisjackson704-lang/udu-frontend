@@ -1,34 +1,8 @@
-/* Define Keyframes */
-@keyframes fade {
-  0% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
-}
+/* src/styles/animations.css */
 
-@keyframes zoom {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-@keyframes glow {
-  0%, 100% { filter: drop-shadow(0 0 2px #fbbf24); }
-  50% { filter: drop-shadow(0 0 12px #fbbf24); }
-}
-
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
-}
-
-/* Animation Utility Classes */
+/* ===========================
+   Root Variables
+   =========================== */
 :root {
   --default-animation-duration: 3s;
   --fade-duration: var(--default-animation-duration);
@@ -37,46 +11,138 @@
   --glow-duration: var(--default-animation-duration);
   --float-duration: var(--default-animation-duration);
   --fade-in-duration: 2s;
+  --ease-default: ease-in-out;
 }
 
+/* ===========================
+   Keyframes
+   =========================== */
+
+/* Fade Animation */
+@keyframes fade {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); /* Slight upward motion */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade Out Animation */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Glow Animation */
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 2px #fbbf24); }
+  50% { filter: drop-shadow(0 0 12px #fbbf24); }
+}
+
+/* Zoom Animation */
+@keyframes zoom {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Shake Animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Float Animation */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* ===========================
+   Animation Utility Classes
+   =========================== */
+
+/* Fade Animation */
 .animate-fade {
   animation: fade var(--fade-duration) infinite;
   will-change: opacity;
 }
 
-.animate-zoom {
-  animation: zoom var(--zoom-duration) infinite;
-  will-change: transform;
+/* Fade In Effect */
+.animate-fade-in {
+  animation: fadeIn var(--fade-in-duration) var(--ease-default) forwards;
+  will-change: opacity;
 }
 
-.animate-shake {
-  animation: shake var(--shake-duration) infinite;
-  will-change: transform;
+/* Fade Out Effect */
+.animate-fade-out {
+  animation: fadeOut var(--fade-in-duration) var(--ease-default) forwards;
+  will-change: opacity;
 }
 
+/* Glow Effect */
 .animate-glow {
   animation: glow var(--glow-duration) infinite;
   will-change: filter;
 }
 
+/* Zoom Animation */
+.animate-zoom {
+  animation: zoom var(--zoom-duration) infinite;
+  will-change: transform;
+}
+
+/* Shake Animation */
+.animate-shake {
+  animation: shake var(--shake-duration) infinite;
+  will-change: transform;
+}
+
+/* Float Animation */
 .animate-float {
   animation: float var(--float-duration) infinite;
   will-change: transform;
 }
 
-.animate-fade-in {
-  animation: fade var(--fade-in-duration) ease-in-out;
-  will-change: opacity;
+/* Slide-Up with Fade-In */
+.slide-up {
+  transform: translateY(20px);
+  opacity: 0;
+  animation: fadeIn var(--fade-in-duration) var(--ease-default) forwards;
 }
 
-/* Reduced Motion Support */
+/* ===========================
+   Reduced Motion Support
+   =========================== */
+
+/* Disable animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade,
+  .animate-fade-in,
+  .animate-fade-out,
+  .animate-glow,
   .animate-zoom,
   .animate-shake,
-  .animate-glow,
   .animate-float,
-  .animate-fade-in {
+  .slide-up {
     animation: none;
   }
 }
