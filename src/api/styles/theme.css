@@ -1,1 +1,144 @@
+/* src/styles/theme.css */
 
+/* ===========================
+   Default Theme Variables
+   =========================== */
+:root {
+  /* Base Colors */
+  --color-bg-primary: #000;
+  --color-bg-secondary: #111;
+  --color-text-primary: #fff;
+  --color-text-secondary: #bbb;
+  --color-accent: #ffb300;
+  --color-accent-glow: rgba(255, 179, 0, 0.3);
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Typography */
+  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+
+  /* Transitions */
+  --transition-speed: 0.3s;
+}
+
+/* ===========================
+   Amber Glow Theme
+   =========================== */
+[data-theme="amber"] {
+  --color-bg-primary: #0a0905;
+  --color-bg-secondary: #1b160d;
+  --color-text-primary: #fff3e0;
+  --color-text-secondary: #ffdcb8;
+  --color-accent: #ffc107;
+  --color-accent-glow: rgba(255, 193, 7, 0.3);
+  --color-border: rgba(255, 179, 0.2);
+}
+
+/* ===========================
+   Creator Theme
+   =========================== */
+[data-theme="creator"] {
+  --color-bg-primary: #0d0c10;
+  --color-bg-secondary: #1c1a24;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d1d1e0;
+  --color-accent: #ff4081;
+  --color-accent-glow: rgba(255, 64, 129, 0.3);
+  --color-border: rgba(255, 64, 129, 0.2);
+}
+
+/* ===========================
+   Light Theme (Optional)
+   =========================== */
+[data-theme="light"] {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f2f2f2;
+  --color-text-primary: #000;
+  --color-text-secondary: #333;
+  --color-accent: #007bff;
+  --color-accent-glow: rgba(0, 123, 255, 0.3);
+  --color-border: rgba(0, 0, 0, 0.1);
+}
+
+/* ===========================
+   Base Styles
+   =========================== */
+body {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  transition: background var(--transition-speed), color var(--transition-speed);
+}
+
+header,
+footer {
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+}
+
+button,
+input,
+select,
+textarea {
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  font-family: inherit;
+  transition: background var(--transition-speed), border-color var(--transition-speed);
+}
+
+button:hover {
+  background: var(--color-accent-glow);
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--color-accent);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+a:hover {
+  color: var(--color-text-primary);
+}
+
+.accent {
+  color: var(--color-accent);
+}
+
+.border-accent {
+  border-color: var(--color-accent);
+}
+
+/* ===========================
+   Utility Classes
+   =========================== */
+.hidden {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.bg-primary {
+  background: var(--color-bg-primary);
+}
+
+.bg-secondary {
+  background: var(--color-bg-secondary);
+}
+
+.border-primary {
+  border-color: var(--color-border);
+}
