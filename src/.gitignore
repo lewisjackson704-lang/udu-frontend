@@ -1,1 +1,54 @@
+# Dependencies
+/node_modules/
+/.pnp
+.pnp.js
 
+# Testing
+/coverage
+
+# Build Output
+/dist/
+/build/
+
+# Environment Variables
+.env
+.env.*
+!.env.example # Allow .env.example for documentation
+
+# Miscellaneous
+.DS_Store         # macOS system files
+Thumbs.db         # Windows system files
+*.log             # General log files
+
+# Debug Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE/Editor Configurations
+.idea/            # JetBrains IDEs
+.vscode/          # VS Code
+*.swp             # Swap files (e.g., Vim)
+*.sublime-workspace
+
+# OS-Specific Files
+.DS_Store         # macOS
+Thumbs.db         # Windows
+Desktop.ini       # Windows
+
+# Cache & Temporary Files
+.cache/
+.tmp/
+*.bak             # Backup files
+*.tmp             # Temporary files
+
+# CI/CD
+/.github/workflows/*.log # Prevent GitHub Actions log files from being committed
+
+# Other Build Tools
+.parcel-cache/    # Parcel cache directory
+.turbo/           # Turborepo cache directory
+
+# Static Analysis Tools
+.eslintcache      # ESLint cache
+.stylelintcache   # Stylelint cache
