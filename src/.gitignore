@@ -52,4 +52,3 @@ Desktop.ini       # Windows
 # Static Analysis Tools
 .eslintcache      # ESLint cache
 .stylelintcache   # Stylelint cache
-package-lock.json
