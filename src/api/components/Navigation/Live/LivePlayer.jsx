@@ -13,7 +13,7 @@ export default function LivePlayer() {
           if (Hls.isSupported() && videoRef.current) {
             const hls = new Hls.default();
             hls.loadSource(
-              `${import.meta.env.VITE_STREAM_URL}/${streamInfo.title || "udu-live"}.m3u8`
+              `${import.meta.env.VITE_STREAM_URL}/${streamInfo.title || "YuDux-live"}.m3u8`
             );
             hls.attachMedia(videoRef.current);
 
