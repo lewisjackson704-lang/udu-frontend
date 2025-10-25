@@ -1,2 +1,2 @@
-# udu-frontend
+# YuDux Frontend
 Frontend ui
