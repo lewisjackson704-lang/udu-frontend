@@ -13,7 +13,7 @@ export default function HeaderBar({ onSearch, user }) {
     <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-black/5 bg-white/80 px-4 py-3 backdrop-blur-md dark:border-white/10 dark:bg-black/40">
       {/* Logo */}
       <div className="mr-1 select-none text-2xl font-extrabold text-amber-500 dark:text-amber-400">
-        U*DU
+        YUDUX
       </div>
 
       {/* Search */}
