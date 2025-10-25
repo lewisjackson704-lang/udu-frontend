@@ -11,7 +11,7 @@ export default function App() {
 
   // Initialize Socket.IO connection
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_SOCKET_URL || "https://u-du-backend.onrender.com", {
+    const socket = io(import.meta.env.VITE_SOCKET_URL || "https://yudux-backend.onrender.com", {
       transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 5,
