@@ -16,7 +16,7 @@ const isValidURL = (url) => {
 // Fallback to a secure default production URL if `VITE_API_URL` is not defined or invalid
 const BASE_URL = isValidURL(import.meta.env.VITE_API_URL)
   ? import.meta.env.VITE_API_URL
-  : "https://u-du-backend.onrender.com/api";
+  : "https://yudux-backend.onrender.com/api";
 
 /**
  * API Endpoints

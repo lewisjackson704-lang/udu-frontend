@@ -1,5 +1,5 @@
 // Base API URL (Fallback to production URL if environment variable is not set)
-const BASE_URL = import.meta.env.VITE_API_URL || "https://u-du-backend.onrender.com/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "https://yudux-backend.onrender.com/api";
 
 /**
  * Centralized API Endpoints
